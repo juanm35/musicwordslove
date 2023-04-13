@@ -6,7 +6,6 @@ export default function Home() {
 
   const [res, setRes] = useState({access_token: "",token_type: "", expires_in: null})
   useEffect (() => {
-    console.log("es AGAA", process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID)
     var details = {
       'grant_type': 'client_credentials', 'client_id': process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID , 'client_secret': process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_SECRET
     }
