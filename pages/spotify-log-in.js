@@ -2,6 +2,8 @@ import Head from 'next/head';
 import styles from '../styles/Home.module.css';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import MainButton from '../components/elements/MainButton';
+import 'tailwindcss/tailwind.css'
 
 export default function logIn() {
     const router = useRouter()
@@ -51,6 +53,7 @@ export default function logIn() {
       const data = await fetch('https://api.spotify.com/v1/me', {method: 'GET', headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`}});
       const json = await data.json()
       setUserId(json.id)
+      console.log("IS AGAA", token, json, json.id)
     }
 
     // call the function
@@ -61,6 +64,7 @@ export default function logIn() {
   }, [token])
 
   const handleCreatePlaylist = async() => {
+    console.log("re clickeadooooo")
     const postPlaylist = async () => {
         const playlistBody = {
             "name": input,
@@ -86,67 +90,15 @@ export default function logIn() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main>
-        <strong>Welcome!.</strong>
-        <br></br>
-        {success? <div>Playlist created Successfully!!!</div>:
+      <main className='flex flex-col justify-center items-center gap-4'>
+        <strong className='text-2xl text-mwl-grey'>Welcome! Enter playlist name and click on button to create playlist.</strong>
+        {success? <div className='text-lg text-mwl-grey'>Playlist created Successfully!!!</div>:
         <>
-        <input placeholder='Enter playlist name' value={input} onInput={e => setInput(e.target.value)}/>
-        <button onClick={() => handleCreatePlaylist()} >Create Playlist</button>
+        <input placeholder='Enter playlist name' className='border border-gray-300' value={input} onInput={e => setInput(e.target.value)}/>
+        <MainButton buttonName="Create Playlist" onClick={handleCreatePlaylist}></MainButton>
         </>
         }
       </main>
-
-      <style jsx>{`
-        main {
-          padding: 5rem 0;
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
-        footer {
-          width: 100%;
-          height: 100px;
-          border-top: 1px solid #eaeaea;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-        footer img {
-          margin-left: 0.5rem;
-        }
-        footer a {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          text-decoration: none;
-          color: inherit;
-        }
-        code {
-          background: #fafafa;
-          border-radius: 5px;
-          padding: 0.75rem;
-          font-size: 1.1rem;
-          font-family: Menlo, Monaco, Lucida Console, Liberation Mono,
-            DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
-        }
-      `}</style>
-
-      <style jsx global>{`
-        html,
-        body {
-          padding: 0;
-          margin: 0;
-          font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
-            Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue,
-            sans-serif;
-        }
-        * {
-          box-sizing: border-box;
-        }
-      `}</style>
     </div>
   )
 }

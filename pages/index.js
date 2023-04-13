@@ -2,6 +2,8 @@ import Head from 'next/head';
 import styles from '../styles/Home.module.css';
 import { useEffect, useState } from 'react';
 import 'tailwindcss/tailwind.css'
+import NavBar from '../components/NavBar'
+import MainButton from '../components/elements/MainButton'
 
 export default function Home() {
 
@@ -41,19 +43,26 @@ export default function Home() {
      const spotifyUrl = `https://accounts.spotify.com/authorize?client_id=${process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID}&response_type=code&redirect_uri=${process.env.NEXT_PUBLIC_SPOTIFY_REDIRECT_URI}&scope=%0Auser-read-email%20user-read-private%20playlist-modify-public%20playlist-modify-private`
 
   return (
-    <div className={styles.container}>
+    <div>
       <Head>
         <title>Create Next App</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <NavBar ></NavBar>
 
-      <main>
-        <strong className="text-3xl font-bold underline">MUSICWORDSLOVE.</strong>
+      <main className=' flex flex-col justify-center items-center'>
         <br></br>
-        <div>Coming soon...</div>
+        <br></br>
+        <br></br>
+        <br></br>
+        <br></br>
+        <div className='flex flex-col justify-center items-center w-3/6'>
+          <h1><strong className="text-7xl text-mwl-grey">musicwordslove</strong><strong className='text-mwl-orange text-6xl'>.</strong></h1>
+          <h2 className='mt-4 text-lg text-mwl-grey'>Enjoy your personalized playlist within seconds with AI technology. Share and add it to your music streaming service with just one click.</h2>
+        </div>
         <br></br>
         <a href={spotifyUrl}>
-        <button >Log in</button>
+          <MainButton buttonName="Create Playlist"></MainButton>
         </a>
       </main>
     </div>

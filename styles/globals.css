@@ -39,3 +39,13 @@ button {
   padding: 0.5rem 1rem;
   font-weight: bold;
 }
+
+.nav-item {
+  height: 22px;
+  width: 88px;
+  color: #151E24;
+  font-family: Lexend;
+  font-size: 16px;
+  letter-spacing: -0.07px;
+  line-height: 22px;
+}
