@@ -53,7 +53,6 @@ export default function logIn() {
       const data = await fetch('https://api.spotify.com/v1/me', {method: 'GET', headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`}});
       const json = await data.json()
       setUserId(json.id)
-      console.log("IS AGAA", token, json, json.id)
     }
 
     // call the function
@@ -64,7 +63,6 @@ export default function logIn() {
   }, [token])
 
   const handleCreatePlaylist = async() => {
-    console.log("re clickeadooooo")
     const postPlaylist = async () => {
         const playlistBody = {
             "name": input,
