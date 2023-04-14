@@ -71,8 +71,20 @@ export default function logIn() {
         }
         
         const data = await fetch(`https://api.spotify.com/v1/users/${userId}/playlists`, {method: 'POST', headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`}, body: JSON. stringify(playlistBody)});
+        const json = await data.json()
+        postSongsToPlaylist(json.id)
         setSuccess(true)
     }
+
+    const postSongsToPlaylist = async (playlistId) => {
+      const songsBody =  {
+        uris: [ 
+        "spotify:track:4pbJqGIASGPr0ZpGpnWkDn"
+        ]}     
+            
+      const data = await fetch(`
+      https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {method: 'POST', headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`}, body: JSON. stringify(songsBody)});
+  }
   
       // call the function
       postPlaylist()
