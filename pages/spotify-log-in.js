@@ -4,92 +4,52 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import MainButton from '../components/elements/MainButton';
 import 'tailwindcss/tailwind.css'
+import {fetchAccessToken, fetchUserId} from '../spotify/authorization'
+import {postPlaylist, searchSong} from '../spotify/postPlaylist'
 
 export default function logIn() {
     const router = useRouter()
-
-
     const [token, setToken] = useState("")
     const [userId, setUserId] = useState("")
-    const [input, setInput] = useState('');
+    const [playlistName, setPlaylistName] = useState('');
     const [success, setSuccess] = useState(false);
 
-    useEffect (() => {
-        const {code} = router.query
-        if (code){
-        var details = {
-          'grant_type': 'authorization_code', 'code': code , 'redirect_uri': process.env.NEXT_PUBLIC_SPOTIFY_REDIRECT_URI
-        }
-    
-        var formBody = [];
-        for (var property in details) {
-          var encodedKey = encodeURIComponent(property);
-          var encodedValue = encodeURIComponent(details[property]);
-          formBody.push(encodedKey + "=" + encodedValue);
-        }
-        formBody = formBody.join("&");
-    
-        // declare the data fetching function
-        const fetchAccessToken = async () => {
-          const stringCode = `${process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID}:${process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_SECRET}`  
-          const data = await fetch('https://accounts.spotify.com/api/token', {method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded', 'Authorization': `Basic ${window.btoa(stringCode)}`}, body: formBody});
-          const json = await data.json()
-          setToken(json.access_token)
-        }
-    
-        // call the function
-        fetchAccessToken()
-        // make sure to catch any error
-          .catch(console.error);
-    
-        } 
-      }, [router])
+  useEffect (() => {
+      const {code} = router.query
+      if (code){
+        fetchAccessToken(code, setToken).catch(console.error);
+      }   
+
+  }, [router])
 
   useEffect (() => {
     if (token) {
-
-    // declare the data fetching function
-    const fetchUserId = async () => {
-      const data = await fetch('https://api.spotify.com/v1/me', {method: 'GET', headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`}});
-      const json = await data.json()
-      setUserId(json.id)
-    }
-
-    // call the function
-    fetchUserId()
-    // make sure to catch any error
-      .catch(console.error);
-  }    
+      fetchUserId(token, setUserId).catch(console.error);
+      searchSong("jump van hallen", token)
+    }    
+    
   }, [token])
 
-  const handleCreatePlaylist = async() => {
-    const postPlaylist = async () => {
-        const playlistBody = {
-            "name": input,
-            "description": "Playlist de testeo hecha desde app beta",
-            "public": false
-        }
-        
-        const data = await fetch(`https://api.spotify.com/v1/users/${userId}/playlists`, {method: 'POST', headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`}, body: JSON. stringify(playlistBody)});
-        const json = await data.json()
-        postSongsToPlaylist(json.id)
-        setSuccess(true)
-    }
-
-    const postSongsToPlaylist = async (playlistId) => {
-      const songsBody =  {
+  const handleCreatePlaylist = () => {
+    const songsBody =  [
+      {
         uris: [ 
         "spotify:track:4pbJqGIASGPr0ZpGpnWkDn"
-        ]}     
-            
-      const data = await fetch(`
-      https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {method: 'POST', headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`}, body: JSON. stringify(songsBody)});
-  }
-  
-      // call the function
-      postPlaylist()
-      // make sure to catch any error
-        .catch(console.error);
+        ]
+      },
+      {
+        uris: [ 
+        "spotify:track:0Ruvs5IxqkGqQVWCO2oRpw"
+        ]
+      },
+      {
+        uris: [ 
+        "spotify:track:2FFfOPjyK1P1QLPpe5rcxv"
+        ]
+      },
+    ]    
+     postPlaylist(playlistName, token, userId, songsBody, setSuccess).catch(console.error)
+    
   }
 
 
@@ -104,7 +64,7 @@ export default function logIn() {
         <strong className='text-2xl text-mwl-grey'>Welcome! Enter playlist name and click on button to create playlist.</strong>
         {success? <div className='text-lg text-mwl-grey'>Playlist created Successfully!!!</div>:
         <>
-        <input placeholder='Enter playlist name' className='border border-gray-300' value={input} onInput={e => setInput(e.target.value)}/>
+        <input placeholder='Enter playlist name' className='border border-gray-300' value={playlistName} onInput={e => setPlaylistName(e.target.value)}/>
         <MainButton buttonName="Create Playlist" onClick={handleCreatePlaylist}></MainButton>
         </>
         }
