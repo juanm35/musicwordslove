@@ -59,8 +59,8 @@ export default function logIn() {
         <>
         <input placeholder='Enter playlist name' className='border border-gray-300' value={playlistName} onInput={e => setPlaylistName(e.target.value)}/>
         <div className='flex gap-8'>
-          <input placeholder='Enter first song name' className='border border-gray-300' value={songName} onInput={e => setSongName(e.target.value)}/>
-          <input placeholder='Enter first song artist' className='border border-gray-300' value={songArtist} onInput={e => setSongArtist(e.target.value)}/>
+          <input placeholder='Enter song name' className='border border-gray-300' value={songName} onInput={e => setSongName(e.target.value)}/>
+          <input placeholder='Enter song artist' className='border border-gray-300' value={songArtist} onInput={e => setSongArtist(e.target.value)}/>
         </div>
         <MainButton buttonName="Create Playlist" onClick={handleCreatePlaylist}></MainButton>
         </>
