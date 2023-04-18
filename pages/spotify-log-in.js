@@ -13,6 +13,9 @@ export default function logIn() {
     const [userId, setUserId] = useState("")
     const [playlistName, setPlaylistName] = useState('');
     const [success, setSuccess] = useState(false);
+    const [songName, setSongName] = useState('');
+    const [songArtist, setSongArtist] = useState('');
+    // const [songId, setSongId] = useState('');
 
   useEffect (() => {
       const {code} = router.query
@@ -25,28 +28,18 @@ export default function logIn() {
   useEffect (() => {
     if (token) {
       fetchUserId(token, setUserId).catch(console.error);
-      searchSong("jump van hallen", token)
     }    
     
   }, [token])
 
-  const handleCreatePlaylist = () => {
+  const handleCreatePlaylist = async () => {
+    const songId = await searchSong(`${songName} ${songArtist}`, token)
     const songsBody =  [
       {
         uris: [ 
-        "spotify:track:4pbJqGIASGPr0ZpGpnWkDn"
+          songId
         ]
-      },
-      {
-        uris: [ 
-        "spotify:track:0Ruvs5IxqkGqQVWCO2oRpw"
-        ]
-      },
-      {
-        uris: [ 
-        "spotify:track:2FFfOPjyK1P1QLPpe5rcxv"
-        ]
-      },
+      }
     ]    
      postPlaylist(playlistName, token, userId, songsBody, setSuccess).catch(console.error)
     
@@ -65,6 +58,10 @@ export default function logIn() {
         {success? <div className='text-lg text-mwl-grey'>Playlist created Successfully!!!</div>:
         <>
         <input placeholder='Enter playlist name' className='border border-gray-300' value={playlistName} onInput={e => setPlaylistName(e.target.value)}/>
+        <div className='flex gap-8'>
+          <input placeholder='Enter first song name' className='border border-gray-300' value={songName} onInput={e => setSongName(e.target.value)}/>
+          <input placeholder='Enter first song artist' className='border border-gray-300' value={songArtist} onInput={e => setSongArtist(e.target.value)}/>
+        </div>
         <MainButton buttonName="Create Playlist" onClick={handleCreatePlaylist}></MainButton>
         </>
         }

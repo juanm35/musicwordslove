@@ -19,7 +19,7 @@ export async function postSongToPlaylist(token, songsBody, playlistId){
 }
 
 
-export async function searchSong(q, token){
+export async function searchSong(q, token, setSongId){
  const data = await fetch(`https://api.spotify.com/v1/search?q=${q}&type=track&limit=1`, {method: 'GET', headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`}})
  const json = await data.json()
  const song = json.tracks.items[0]
@@ -28,4 +28,6 @@ export async function searchSong(q, token){
   name: song.name,
   id: `spotify:track:${song.id}`
  })
+
+ return `spotify:track:${song.id}`
 }
