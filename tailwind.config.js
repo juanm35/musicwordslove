@@ -12,7 +12,8 @@ module.exports = {
     extend: {
       colors: {
         'mwl-grey': '#151E24',
-        'mwl-orange': '#FD7310'
+        'mwl-orange': '#FD7310',
+        'mwl-light-grey': '#F8F8F8'
       },
     },
   },
