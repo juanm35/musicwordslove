@@ -4,6 +4,7 @@ import NavBar from '../components/NavBar'
 import {spotifyAuthorizationUrl} from '../spotify/authorization'
 import MainButton from '../components/elements/MainButton'
 import SuccessCase from '../components/SuccessCase'
+import PlaylistsBuilder from '../components/PlaylistsBuilder'
 
 export default function Home() {
   return (
@@ -28,6 +29,7 @@ export default function Home() {
         <a href={spotifyAuthorizationUrl}>
           <MainButton buttonName="Create Playlist"></MainButton>
         </a>
+        <PlaylistsBuilder></PlaylistsBuilder>
         <br></br>
         <br></br>
         <br></br>
