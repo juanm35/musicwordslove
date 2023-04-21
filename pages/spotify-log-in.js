@@ -17,23 +17,43 @@ export default function logIn() {
     const [songArtist, setSongArtist] = useState('');
     // const [songId, setSongId] = useState('');
 
+  // GETTING ACCESS TOKEN FOR THE USER
   useEffect (() => {
       const {code} = router.query
       if (code){
-        fetchAccessToken(code, setToken).catch(console.error);
+        async function fetchData(){
+          try{
+          const result = await fetchAccessToken(code);
+          setToken(result)
+          } catch (error) {
+            console.error(error)
+          }
+        }
+
+        fetchData()
       }   
 
   }, [router])
 
+  // GETTING USER ID
   useEffect (() => {
     if (token) {
-      fetchUserId(token, setUserId).catch(console.error);
-    }    
-    
+      async function fetchData(){
+        try{
+          const result = await fetchUserId(token);
+          setUserId(result)
+        } catch (error) {
+          console.error(error)
+        }
+      }    
+
+      fetchData()
+    }
   }, [token])
 
+  // CREATE PLAYLIST HANDLER
   const handleCreatePlaylist = async () => {
-    const songId = await searchSong(`${songName} ${songArtist}`, token)
+    const songId = await searchSong(`${songName} ${songArtist}`, token).catch(console.error)
     const songsBody =  [
       {
         uris: [ 

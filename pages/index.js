@@ -5,8 +5,14 @@ import {spotifyAuthorizationUrl} from '../spotify/authorization'
 import MainButton from '../components/elements/MainButton'
 import SuccessCase from '../components/SuccessCase'
 import PlaylistsBuilder from '../components/PlaylistsBuilder'
+import {promptResponse} from '../gpt/index'
+import { useEffect } from 'react';
 
 export default function Home() {
+  // useEffect (() => {
+  //   const test = promptResponse().catch(console.error)
+  //   console.log(test)
+  // })
   return (
     <div>
       <Head>

@@ -1,6 +1,6 @@
 export const spotifyAuthorizationUrl = `https://accounts.spotify.com/authorize?client_id=${process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID}&response_type=code&redirect_uri=${process.env.NEXT_PUBLIC_SPOTIFY_REDIRECT_URI}&scope=%0Auser-read-email%20user-read-private%20playlist-modify-public%20playlist-modify-private`
 
-export async function fetchAccessToken(code, setToken){
+export async function fetchAccessToken(code){
     var details = {
       'grant_type': 'authorization_code', 'code': code , 'redirect_uri': process.env.NEXT_PUBLIC_SPOTIFY_REDIRECT_URI
     }
@@ -17,13 +17,13 @@ export async function fetchAccessToken(code, setToken){
     const stringCode = `${process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID}:${process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_SECRET}`  
     const data = await fetch('https://accounts.spotify.com/api/token', {method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded', 'Authorization': `Basic ${window.btoa(stringCode)}`}, body: formBody});
     const json = await data.json()
-    setToken(json.access_token)
-  } 
+    return json.access_token
+}
 
 export async function fetchUserId(token, setUserId){
     const data = await fetch('https://api.spotify.com/v1/me', {method: 'GET', headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`}});
     const json = await data.json()
-    setUserId(json.id)
+    return json.id
 }
 
 export async function fetchClientCredentials(){
