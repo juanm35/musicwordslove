@@ -11,6 +11,8 @@ export default function PlaylistsBuilder() {
     
     const [completeError, setCompleteError] = useState(false)
 
+    const [test, setTest] = useState('')
+
     function assignDescription(e){
         setDescription(e.target.value)
     }
@@ -53,7 +55,7 @@ export default function PlaylistsBuilder() {
                 setCompleteError(false)
             const prompt = `
                 Generate a json that represents a playlist. The json must contain ${numberSongs} elements, each element represents a song and must have 2 attributes: title and artist. This songs should be generated based on this desciption: ${description}.${language}${mood}${explicit}`
-                console.log(prompt)
+                setTest(prompt)
             }
         }
 
@@ -84,6 +86,7 @@ export default function PlaylistsBuilder() {
             </label>
             <MainButton buttonName="Generate" onClick={generatePlaylist}></MainButton>
         </div>
+        <p className='text-green-600'>{test}</p>
     </div>
     );
   }
