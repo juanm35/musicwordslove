@@ -15,12 +15,12 @@ export default function logIn() {
     const [userId, setUserId] = useState("")
     const [playlistName, setPlaylistName] = useState('');
     const [success, setSuccess] = useState(false);
+    const [loading, setLoading] = useState(false);
 
 
     const [playlist, setPlaylist] = useState([]);
 
     useEffect(() => {
-      console.log("AGAAA PLAYLIST: ", playlist, typeof playlist )
     }, [playlist])
 
   // GETTING ACCESS TOKEN FOR THE USER
@@ -98,9 +98,10 @@ export default function logIn() {
             : 
             <>
               <strong className='text-2xl text-mwl-grey'>How would you like your playlist?</strong>
-              <PlaylistsBuilder setPlaylist={setPlaylist}></PlaylistsBuilder>
+              <PlaylistsBuilder setPlaylist={setPlaylist} setLoading={setLoading}></PlaylistsBuilder>
             </>
         }
+        <div className='text-mwl-orange'>{loading? 'Creating your playlist... please wait.' : ''}</div>
       </main>
     </div>
   )

@@ -2,7 +2,7 @@ import MainButton from './elements/MainButton'
 import { useState } from 'react';
 import {promptResponse} from '../gpt/index'
 
-export default function PlaylistsBuilder({setPlaylist}) {
+export default function PlaylistsBuilder({setPlaylist, setLoading}) {
 
     const [numberSongs, setNumberSongs] = useState('10')
     const [description, setDescription] = useState('')
@@ -11,8 +11,6 @@ export default function PlaylistsBuilder({setPlaylist}) {
     const [explicit, setExplicit] = useState(' Do not include explicit songs.')
     
     const [completeError, setCompleteError] = useState(false)
-
-    const [test, setTest] = useState('')
 
     function assignDescription(e){
         setDescription(e.target.value)
@@ -55,12 +53,12 @@ export default function PlaylistsBuilder({setPlaylist}) {
                     setCompleteError(true)
                 } else {
                     setCompleteError(false)
+                    setLoading(true)
                 const prompt = `
                     Generate an array that represents a playlist of songs. The array must contain ${numberSongs} elements, each element must be a string composed by the title and artist of the song separated by a : and a space. For example: [Tu: Shakira, Loba: Shakira]. This playlist should be generated based on this main desciption: ${description}.${language}${mood}${explicit} Return only the array, do not include any explanatory text.`
                    const playlist = await promptResponse(prompt)
-                   console.log("AGAAA INSIDE GENERATE: ", playlist)
                    setPlaylist(JSON.parse(playlist))
-                   setTest(playlist)
+                   setLoading(false)
                 }
             } catch(error) {
                 console.error(error)
@@ -94,7 +92,6 @@ export default function PlaylistsBuilder({setPlaylist}) {
             </label>
             <MainButton buttonName="Generate" onClick={generatePlaylist}></MainButton>
         </div>
-        <p className='text-green-600'>{test}</p>
     </div>
     );
   }
