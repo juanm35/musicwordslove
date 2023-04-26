@@ -6,6 +6,8 @@ import MainButton from '../components/elements/MainButton';
 import 'tailwindcss/tailwind.css'
 import {fetchAccessToken, fetchUserId} from '../spotify/authorization'
 import {postPlaylist, searchSong} from '../spotify/postPlaylist'
+import PlaylistsBuilder from '../components/PlaylistsBuilder'
+import Playlist from '../components/Playlist'
 
 export default function logIn() {
     const router = useRouter()
@@ -13,9 +15,13 @@ export default function logIn() {
     const [userId, setUserId] = useState("")
     const [playlistName, setPlaylistName] = useState('');
     const [success, setSuccess] = useState(false);
-    const [songName, setSongName] = useState('');
-    const [songArtist, setSongArtist] = useState('');
-    // const [songId, setSongId] = useState('');
+
+
+    const [playlist, setPlaylist] = useState([]);
+
+    useEffect(() => {
+      console.log("AGAAA PLAYLIST: ", playlist, typeof playlist )
+    }, [playlist])
 
   // GETTING ACCESS TOKEN FOR THE USER
   useEffect (() => {
@@ -53,16 +59,21 @@ export default function logIn() {
 
   // CREATE PLAYLIST HANDLER
   const handleCreatePlaylist = async () => {
-    const songId = await searchSong(`${songName} ${songArtist}`, token).catch(console.error)
-    const songsBody =  [
-      {
-        uris: [ 
-          songId
-        ]
-      }
-    ]    
-     postPlaylist(playlistName, token, userId, songsBody, setSuccess).catch(console.error)
-    
+    if (playlist && playlist.length >0) {
+
+      const sUris = await Promise.all (playlist.map( async (song) => {
+        const [songName, artistName] = song.split(": ");
+        const songId = await searchSong(`${songName} ${artistName}`, token).catch(console.error)
+        return songId
+      }))
+      const songsBody =  [
+        {
+          uris: sUris
+        }
+      ]  
+
+      postPlaylist(playlistName, token, userId, songsBody, setSuccess).catch(console.error)
+    }
   }
 
 
@@ -73,17 +84,22 @@ export default function logIn() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className='flex flex-col justify-center items-center gap-4'>
-        <strong className='text-2xl text-mwl-grey'>Welcome! Enter playlist name and click on button to create playlist.</strong>
-        {success? <div className='text-lg text-mwl-grey'>Playlist created Successfully!!!</div>:
-        <>
-        <input placeholder='Enter playlist name' className='border border-gray-300' value={playlistName} onInput={e => setPlaylistName(e.target.value)}/>
-        <div className='flex gap-8'>
-          <input placeholder='Enter song name' className='border border-gray-300' value={songName} onInput={e => setSongName(e.target.value)}/>
-          <input placeholder='Enter song artist' className='border border-gray-300' value={songArtist} onInput={e => setSongArtist(e.target.value)}/>
-        </div>
-        <MainButton buttonName="Create Playlist" onClick={handleCreatePlaylist}></MainButton>
-        </>
+      <main className='flex flex-col justify-center items-center gap-4 w-full'>
+        {success? 
+          
+          <div className='text-lg text-mwl-grey'>Playlist created Successfully!!!</div>:        
+          playlist && playlist.length > 0 ?
+            <>
+              <strong className='text-2xl text-mwl-grey'>You are almost there! Enter playlist name and generate your playlist!</strong>
+              <Playlist songs={playlist}></Playlist>
+              <input placeholder='Enter playlist name' className='border border-gray-300' value={playlistName} onInput={e => setPlaylistName(e.target.value)}/>
+              <MainButton buttonName="Create Playlist" onClick={handleCreatePlaylist}></MainButton>
+            </>
+            : 
+            <>
+              <strong className='text-2xl text-mwl-grey'>How would you like your playlist?</strong>
+              <PlaylistsBuilder setPlaylist={setPlaylist}></PlaylistsBuilder>
+            </>
         }
       </main>
     </div>

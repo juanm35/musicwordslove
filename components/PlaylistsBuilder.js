@@ -1,13 +1,14 @@
 import MainButton from './elements/MainButton'
 import { useState } from 'react';
+import {promptResponse} from '../gpt/index'
 
-export default function PlaylistsBuilder() {
+export default function PlaylistsBuilder({setPlaylist}) {
 
     const [numberSongs, setNumberSongs] = useState('10')
     const [description, setDescription] = useState('')
     const [language, setLanguage] = useState('')
     const [mood, setMood] = useState('')
-    const [explicit, setExplicit] = useState('')
+    const [explicit, setExplicit] = useState(' Do not include explicit songs.')
     
     const [completeError, setCompleteError] = useState(false)
 
@@ -22,46 +23,53 @@ export default function PlaylistsBuilder() {
     }
 
     function assignLanguage(e){
-        if (e == '') {
+        if (e.target.value == '') {
             setLanguage('')
         } else {
-            let languageText = ` The songs should be on ${e.target.value} language only.`
-            setMood(languageText)
+            let languageText = ` Only include songs in ${e.target.value}.`
+            setLanguage(languageText)
         }
     }
 
     function assignMood(e){
-        if (e == '') {
+        if (e.target.value == '') {
             setMood('')
         } else {
-            let moodText = ` The mood of the songs should inspire ${e.target.value}.`
+            let moodText = ` The mood of the playlist should inspire ${e.target.value}.`
             setMood(moodText)
         }
     }
 
     function assignExplicit(e){
-        if (!e) {
-            setExplicit('')
-        } else {
-            let explicitText = ` The list can contain explicit songs.`
+        if (!e.target.checked) {
+            let explicitText = ` Do not include explicit songs.`
             setExplicit(explicitText)
+        } else {
+            setExplicit('')
         }        
     }
 
-    function generatePlaylist(){
-        if (!description){
-                setCompleteError(true)
-            } else {
-                setCompleteError(false)
-            const prompt = `
-                Generate a json that represents a playlist. The json must contain ${numberSongs} elements, each element represents a song and must have 2 attributes: title and artist. This songs should be generated based on this desciption: ${description}.${language}${mood}${explicit}`
-                setTest(prompt)
+    async function generatePlaylist(){
+        try {
+            if (!description){
+                    setCompleteError(true)
+                } else {
+                    setCompleteError(false)
+                const prompt = `
+                    Generate an array that represents a playlist of songs. The array must contain ${numberSongs} elements, each element must be a string composed by the title and artist of the song separated by a : and a space. For example: [Tu: Shakira, Loba: Shakira]. This playlist should be generated based on this main desciption: ${description}.${language}${mood}${explicit} Return only the array, do not include any explanatory text.`
+                   const playlist = await promptResponse(prompt)
+                   console.log("AGAAA INSIDE GENERATE: ", playlist)
+                   setPlaylist(JSON.parse(playlist))
+                   setTest(playlist)
+                }
+            } catch(error) {
+                console.error(error)
             }
+
         }
 
     return (
-    <div className="w-3/5 flex flex-col gap-4 mt-4 bg-gray-100 p-4">
-        <p className='text-red-400'>*This section is still in progress</p>
+    <div className="w-3/5 flex flex-col gap-4 mt-4 bg-gray-100 p-4 pt-8">
         <input onChange={e => assignDescription(e)} className='border border-solid-4 rounded-md h-12 p-2' placeholder="I want a playlist about bla bla bla"></input>
         {completeError? <p className='text-red-600 pl-2'>This field is required.</p>:<></>}
         <div className='flex w-full gap-8 justify-between'>
