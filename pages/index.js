@@ -22,7 +22,7 @@ export default function Home() {
           <h1><strong className="text-7xl text-mwl-grey">musicwordslove</strong><strong className='text-mwl-orange text-6xl'>.</strong></h1>
           <h2 className='mt-4 text-gray-800 font-lexend font-light text-lg font-weight-300 tracking-wider leading-9 text-center'>Enjoy your personalized playlist within seconds with AI technology. Share and add it to your music streaming service with just one click.</h2>
         </div>
-        {currentUser?
+        {currentUser && currentUser.emailVerified?
         <a href={spotifyAuthorizationUrl} className='py-12'>
           <MainButton buttonName="Get Started"></MainButton>
         </a>:

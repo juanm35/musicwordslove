@@ -15,7 +15,7 @@ export default function NavBar() {
           <div className="px-6">
             <div className="cursor-pointer h-6 w-24 text-base leading-6 text-gray-800 font-bold tracking-wide underline">Pricing</div>
           </div>
-          {currentUser?
+          {currentUser && currentUser.emailVerified?
           <div onClick={() => Logout()} className="px-6">
             <div className="cursor-pointer h-6 w-24 text-base leading-6 text-gray-800 font-bold tracking-wide underline">Logout</div>
           </div>:
