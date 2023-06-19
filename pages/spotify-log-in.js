@@ -1,5 +1,4 @@
 import Head from 'next/head';
-import styles from '../styles/Home.module.css';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import MainButton from '../components/elements/MainButton';
@@ -8,6 +7,9 @@ import {fetchAccessToken, fetchUserId} from '../spotify/authorization'
 import {postPlaylist, searchSong} from '../spotify/postPlaylist'
 import PlaylistsBuilder from '../components/PlaylistsBuilder'
 import Playlist from '../components/Playlist'
+import styles from '../styles/Home.module.css';
+import useAuthRedirect from '../hooks/useAuthRedirect'
+import {useAuth} from "../context/AuthContext"
 
 export default function logIn() {
     const router = useRouter()
@@ -16,6 +18,9 @@ export default function logIn() {
     const [playlistName, setPlaylistName] = useState('');
     const [success, setSuccess] = useState(false);
     const [loading, setLoading] = useState(false);
+    const { currentUser } = useAuth();
+    
+    useAuthRedirect(currentUser)
 
 
     const [playlist, setPlaylist] = useState([]);

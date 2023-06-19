@@ -12,7 +12,6 @@ export const promptResponse = async(prompt) => {
         max_tokens: 200,
         temperature: 0,
     })
-    console.log( "AGAA INSIDE PROMPT: ", result.data.choices[0].text)
     return result.data.choices[0].text
   } catch (error) {
     console.error(error)
