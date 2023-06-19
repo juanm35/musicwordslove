@@ -36,7 +36,7 @@ export default function RecoverPassword() {
                     setEmailError("Invalid email address. Please enter a valid email.")
                     break;
                 case "auth/user-not-found":
-                    setLoginError("User not found. Please check your email and try again.")
+                    setEmailError("User not found. Please check your email and try again.")
                     break;
                 default:
                     setEmailError("An error occurred. Please try again later.")
