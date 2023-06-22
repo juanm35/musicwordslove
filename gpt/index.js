@@ -9,7 +9,7 @@ export const promptResponse = async(prompt) => {
     const result = await openai.createCompletion({
         model: "text-davinci-003",
         prompt: `${prompt}`,
-        max_tokens: 200,
+        max_tokens: 400,
         temperature: 0,
     })
     return result.data.choices[0].text

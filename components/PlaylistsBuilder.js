@@ -1,23 +1,37 @@
 import MainButton from './elements/MainButton'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {promptResponse} from '../gpt/index'
+import {createPrompt} from '../firebase/firestore'
+import { useAuth } from "../context/AuthContext"
 
 export default function PlaylistsBuilder({setPlaylist, setLoading}) {
 
-    const [numberSongs, setNumberSongs] = useState('10')
+    const { currentUser } = useAuth();
+
     const [description, setDescription] = useState('')
     const [language, setLanguage] = useState('')
     const [mood, setMood] = useState('')
-    const [explicit, setExplicit] = useState(' Do not include explicit songs.')
+    const [repeatArtist, setRepeatArtist] = useState(' Avoid repeating artists.')
+    const [explicit, setExplicit] = useState(' Avoid explicit songs.')
+    const [hoursDuration, setHoursDuration] = useState(1)
+    const [minutesDuration, setMinutesDuration] = useState(0)
     
     const [completeError, setCompleteError] = useState(false)
+
+    useEffect(() => {
+        console.log("Current User PROMPT: ", currentUser)
+      }, [currentUser]);
 
     function assignDescription(e){
         setDescription(e.target.value)
     }
 
-    function assignNumberSongs(e){
-        setNumberSongs(e.target.value)
+    function assignHoursDuration(e){
+        setHoursDuration(e.target.value)
+    }
+
+    function assignMinutesDuration(e){
+        setMinutesDuration(e.target.value)
     }
 
     function assignLanguage(e){
@@ -38,9 +52,18 @@ export default function PlaylistsBuilder({setPlaylist, setLoading}) {
         }
     }
 
+    function assignRepeatArtist(e){
+        if (!e.target.checked) {
+            let repeatArtistText = ` Avoid repeating artists.`
+            setRepeatArtist(repeatArtistText)
+        } else {
+            setRepeatArtist('')
+        }        
+    }
+
     function assignExplicit(e){
         if (!e.target.checked) {
-            let explicitText = ` Do not include explicit songs.`
+            let explicitText = ` Avoid explicit songs.`
             setExplicit(explicitText)
         } else {
             setExplicit('')
@@ -54,11 +77,12 @@ export default function PlaylistsBuilder({setPlaylist, setLoading}) {
                 } else {
                     setCompleteError(false)
                     setLoading(true)
-                const prompt = `
-                    Generate an array that represents a playlist of songs. The array must contain ${numberSongs} elements, each element must be a string composed by the title and artist of the song separated by a : and a space. For example: [Tu: Shakira, Loba: Shakira]. This playlist should be generated based on this main desciption: ${description}.${language}${mood}${explicit} Return only the array, do not include any explanatory text.`
+                const prompt = `Generate an array that represents a playlist of songs. Playlist duration should be within ${hoursDuration}h${minutesDuration}m ±5%. Each element must be a string composed by the title and artist of the song separated by a : and a space. For example: [Tu: Shakira, Loba: Shakira]. This playlist should be generated based on this main desciption: ${description}.${language}${mood}${explicit}${repeatArtist} Return only the array, do not include any explanatory text.`
                    const playlist = await promptResponse(prompt)
                    setPlaylist(JSON.parse(playlist))
                    setLoading(false)
+                   console.log("GENERATED PROMPT: ", prompt)
+                   await createPrompt(currentUser.uid, description, language, mood, explicit, repeatArtist, hoursDuration, minutesDuration, prompt)
                 }
             } catch(error) {
                 console.error(error)
@@ -81,11 +105,18 @@ export default function PlaylistsBuilder({setPlaylist, setLoading}) {
                 <option value='Relax'>Relaxing</option>
                 <option value='Happiness'>Happy</option>
             </select>
-            <select className='border border-solid-4 rounded-md w-fit p-4' onChange={e => assignNumberSongs(e)}>
-                <option value='10'>10 songs</option>
-                <option value='20'>20 songs</option>
-                <option value='30'>30 songs</option>
-            </select>
+            <label className='flex justify-center items-center border border-solid-4 rounded-md w-fit p-2 gap-2'>
+                <input type="number" min="0" step="1" pattern="\d*" className='w-1/2 p-4' onChange={e => assignHoursDuration(e)}/>
+                <div className='bg-grey-400'>hours</div>
+            </label>
+            <label className='flex justify-center items-center border border-solid-4 rounded-md w-fit p-2 gap-2'>
+                <input type="number" min="0" step="1" pattern="\d*" max="59" className='w-1/2 p-4' onChange={e => assignMinutesDuration(e)}/>
+                <div className='bg-grey-400'>minutes</div>
+            </label>
+            <label className='flex justify-center items-center gap-2'>
+                <input type="checkbox" className='border border-solid-4' onChange={e => assignRepeatArtist(e)}></input>
+                Repeat Artist
+            </label>
             <label className='flex justify-center items-center gap-2'>
                 <input type="checkbox" className='border border-solid-4' onChange={e => assignExplicit(e)}></input>
                 Explicit songs

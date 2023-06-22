@@ -8,7 +8,6 @@ export const db = getFirestore(app);
 
 // Add a new user document with a generated id.
 export async function createUserProfileAnex(user) {
-    //for ... of
     const docRef = doc(db, "users", user.id);
     const data = {
         displayName: user.displayName,
@@ -17,6 +16,24 @@ export async function createUserProfileAnex(user) {
     }
     const result = await setDoc(docRef, data);
     console.log("Documento creado", result);
+}
+
+// Add prompt.
+export async function createPrompt(userId, description, language, mood, explicitSongs, repeatArtist, hours, minutes, prompt) {
+  const collectionRef = collection(db, "prompts");
+  const promptData = {
+      userId: userId,
+      description: description,
+      language: language,
+      mood: mood,
+      explicitSongs: explicitSongs,
+      durationInMinutes: hours*60 + minutes*1,
+      repeatArtist: repeatArtist,
+      completePrompt: prompt
+
+  }
+  const result = await addDoc(collectionRef, promptData);
+  console.log("Prompt almacenado: ", result.id);
 }
 
 
