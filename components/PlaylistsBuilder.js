@@ -18,10 +18,6 @@ export default function PlaylistsBuilder({setPlaylist, setLoading}) {
     
     const [completeError, setCompleteError] = useState(false)
 
-    useEffect(() => {
-        console.log("Current User PROMPT: ", currentUser)
-      }, [currentUser]);
-
     function assignDescription(e){
         setDescription(e.target.value)
     }
